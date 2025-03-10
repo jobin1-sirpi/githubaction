@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -27,12 +27,12 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/shiny-app:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/shiny-app:latest
 
-      - name: Deploy on Shiny Server
+      - name: Deploy on Shiny Server (AWS EC2)
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
+          username: ubuntu  # Default username for AWS EC2
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  # Use SSH key instead of password
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/shiny-app:latest
             docker stop shiny-container || true
